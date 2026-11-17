@@ -170,24 +170,6 @@ int main(void) {
     system("arch-chroot /mnt/arch systemctl enable NetworkManager.service");
     system("arch-chroot /mnt/arch grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB");
     system("arch-chroot /mnt/arch grub-mkconfig -o /boot/grub/grub.cfg");
-    printf("Install yay? [y/n]\n");
-    char yayAnswer[5];
-    scanf("%s", yayAnswer);
-    if (strcmp(yayAnswer, "y") == 0) {
-        system("echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /mnt/arch/etc/sudoers.d/99-tmp-nopasswd");
-        system("chmod 440 /mnt/arch/etc/sudoers.d/99-tmp-nopasswd");
-        char cmd[512];
-        snprintf(cmd, sizeof(cmd),
-            "arch-chroot -u %s /mnt/arch sh -c 'cd ~ && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si --noconfirm'",
-            username);
-        int rc = system(cmd);
-        system("rm -f /mnt/arch/etc/sudoers.d/99-tmp-nopasswd");
-        if (rc != 0) { printf("yay build failed\n"); return 1; }
-        printf("Yay installed\n");
-    }
-    else {
-        printf("Yay not installed\n");
-    }
     printf("Enable multilib repository? [y/n]\n");
     char multilibAnswer[5];
     scanf("%s", multilibAnswer);
@@ -203,8 +185,9 @@ int main(void) {
     char optionalAnswer[5];
     scanf("%s", optionalAnswer);
     if (strcmp(optionalAnswer, "y") == 0) {
-        system("arch-chroot /mnt/arch pacman -S --noconfirm discord strawberry steam firefox");
+        system("arch-chroot /mnt/arch pacman -S --noconfirm discord strawberry firefox");
         system("arch-chroot /mnt/arch pacman -S steam");
+        system("arch-chroot /mnt/arch pacman -S flatpak");
         system("arch-chroot /mnt/arch flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo");
         system("arch-chroot /mnt/arch flatpak install flathub com.spotify.Client -y");
         system("arch-chroot /mnt/arch flatpak install flathub org.vinegarhq.Sober -y");
