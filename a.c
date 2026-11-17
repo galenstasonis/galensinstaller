@@ -25,11 +25,11 @@ int main() {
     printf ("X = %d\n", x);
     ++x;
     printf ("X = %d\n", x);
-    bool isTrumpAmazing = false;
-    bool doIHateTarun = true;
+    bool isTrumpAmazing = true;
+    bool doIHateTarun = false;
     printf(ANSI_COLOR_RED "Is Trump amazing? %d\n" ANSI_COLOR_RESET, isTrumpAmazing );
     printf("Do I hate Tarun? %d\n", doIHateTarun);
-    printf("Are both booleans the same? %d\n", isTrumpAmazing == doIHateTarun);\
+    printf("Are both booleans the same? %d\n", isTrumpAmazing == doIHateTarun);
     if (isTrumpAmazing == 0) {
         printf("Thank you for hating trump, you are a good person\n");
     }
@@ -38,6 +38,9 @@ int main() {
     }
     else {
         printf("You are a bad person for liking trump\n");
+    }
+    if (isTrumpAmazing == 1 && doIHateTarun == 0) {
+        printf("genuinely fuck you end your like just die already\n");
     }
     return 0;
 
