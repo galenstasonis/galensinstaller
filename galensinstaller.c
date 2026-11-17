@@ -196,7 +196,8 @@ int main(void) {
     printf("returned to program with status %d\n", localeStatus);
     system("arch-chroot /mnt/arch systemctl enable plasmalogin.service");
     system("arch-chroot /mnt/arch systemctl enable NetworkManager.service");
-    system("arch-chroot /mnt/arch grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB");
+    system("arch-chroot /mnt/arch grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --removable");
+    system("arch-chroot /mnt/arch grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB ");
     system("arch-chroot /mnt/arch grub-mkconfig -o /boot/grub/grub.cfg");
     printf("Enable multilib repository? [y/n]\n");
     char multilibAnswer[5];
