@@ -69,6 +69,34 @@ int main(void) {
         printf("User skipped boot partition formatting\n Please enter boot partition name");
         scanf("%s", bootPartition);
     }
+    char parentDisk[64] = "";
+    char pkCmd[128];
+    snprintf(pkCmd, sizeof(pkCmd), "lsblk -no PKNAME /dev/%s", bootPartition);
+    FILE *pk = popen(pkCmd, "r");
+    if (pk == NULL || fgets(parentDisk, sizeof(parentDisk), pk) == NULL) {
+        printf("Could not determine parent disk of %s\n", bootPartition);
+        if (pk) pclose(pk);
+        return 1;
+    }
+    pclose(pk);
+    parentDisk[strcspn(parentDisk, "\n")] = '\0';
+    char partFile[128];
+    snprintf(partFile, sizeof(partFile), "/sys/class/block/%s/partition", bootPartition);
+    int partNum;
+    FILE *pf = fopen(partFile, "r");
+    if (pf == NULL || fscanf(pf, "%d", &partNum) != 1) {
+        printf("Could not determine partition number for %s\n", bootPartition);
+        if (pf) fclose(pf);
+        return 1;
+    }
+    fclose(pf);
+
+    char efiTypeCmd[256];
+    snprintf(efiTypeCmd, sizeof(efiTypeCmd), "sgdisk -t %d:ef00 /dev/%s", partNum, parentDisk);
+    if (system(efiTypeCmd) != 0) {
+    printf("Failed to set EFI System partition type\n");
+    return 1;
+    }
     system("mkdir /mnt/arch");
     char mountRootCommand[50] = "mount /dev/";
     strcat(mountRootCommand, rootPartition);
