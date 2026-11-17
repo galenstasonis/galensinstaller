@@ -86,7 +86,7 @@ int main(void) {
     if (strcmp(answer, "n") == 0) {
         return 0;
     }
-    system("pacstrap -K /mnt/arch base linux linux-firmware vim nano sudo base-devel plasma-desktop sddm networkmanager git reflector btrfs-progs grub efibootmgr os-prober ntfs-3g man-pages man-db texinfo kde-applications plasma-login-manager");
+    system("pacstrap -K /mnt/arch base linux linux-firmware vim nano sudo base-devel plasma-desktop sddm networkmanager git fastfetch reflector btrfs-progs grub efibootmgr os-prober ntfs-3g man-pages man-db texinfo kde-applications plasma-login-manager");
     printf("Base packages installed, proceeding to generate fstab\n");
     system("genfstab -U /mnt/arch >> /mnt/arch/etc/fstab");
     printf("fstab generated");
@@ -174,14 +174,45 @@ int main(void) {
     char yayAnswer[5];
     scanf("%s", yayAnswer);
     if (strcmp(yayAnswer, "y") == 0) {
-        system("arch-chroot /mnt/arch git clone https://aur.archlinux.org/yay.git /tmp/yay");
-        system("arch-chroot /mnt/arch chown -R $(whoami):$(whoami) /tmp/yay");
-        system("arch-chroot /mnt/arch bash -c \"cd /tmp/yay && makepkg -si --noconfirm\"");
+        system("echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /mnt/arch/etc/sudoers.d/99-tmp-nopasswd");
+        system("chmod 440 /mnt/arch/etc/sudoers.d/99-tmp-nopasswd");
+        char cmd[512];
+        snprintf(cmd, sizeof(cmd),
+            "arch-chroot -u %s /mnt/arch sh -c 'cd ~ && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si --noconfirm'",
+            username);
+        int rc = system(cmd);
+        system("rm -f /mnt/arch/etc/sudoers.d/99-tmp-nopasswd");
+        if (rc != 0) { printf("yay build failed\n"); return 1; }
         printf("Yay installed\n");
     }
     else {
         printf("Yay not installed\n");
     }
+    printf("Enable multilib repository? [y/n]\n");
+    char multilibAnswer[5];
+    scanf("%s", multilibAnswer);
+    if (strcmp(multilibAnswer, "y") == 0) {
+        system("sed -i '/^#\\[multilib\\]/,/^#Include/ s/^#//' /mnt/arch/etc/pacman.conf");
+        system("arch-chroot /mnt/arch pacman -Sy");
+        printf("Multilib repository enabled\n");
+    }   
+    else {
+        printf("Multilib repository not enabled\n");
+    }
+    printf("(Discord, Spotify, Strawberry, Steam, Spotify (flatpak ), Sober (flatpak ), Firefox)\n Install optional packages? [y/n]\n");
+    char optionalAnswer[5];
+    scanf("%s", optionalAnswer);
+    if (strcmp(optionalAnswer, "y") == 0) {
+        system("arch-chroot /mnt/arch pacman -S --noconfirm discord strawberry steam firefox");
+        system("arch-chroot /mnt/arch pacman -S steam");
+        system("arch-chroot /mnt/arch flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo");
+        system("arch-chroot /mnt/arch flatpak install flathub com.spotify.Client -y");
+        system("arch-chroot /mnt/arch flatpak install flathub org.vinegarhq.Sober -y");
+        printf("Optional packages installed\n");
+    }
+    else {
+        printf("Optional packages not installed\n");
+    }  
     printf("Arch installation complete, please reboot and remove the installation media\n");
     return 0;
 }
