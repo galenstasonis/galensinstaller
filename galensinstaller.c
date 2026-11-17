@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <termios.h>
+#include <unistd.h>
 
 int main(void) {
     char buffer[1024];
@@ -117,9 +119,10 @@ int main(void) {
     system("pacstrap -K /mnt/arch base linux linux-firmware vim nano sudo base-devel plasma-desktop sddm networkmanager git fastfetch reflector btrfs-progs grub efibootmgr os-prober ntfs-3g man-pages man-db texinfo kde-applications plasma-login-manager");
     printf("Base packages installed, proceeding to generate fstab\n");
     system("genfstab -U /mnt/arch >> /mnt/arch/etc/fstab");
-    printf("fstab generated");
+    printf("fstab generated\n");
     // lists regions available
     system("arch-chroot /mnt/arch ls /usr/share/zoneinfo/");
+    tcflush(STDIN_FILENO, TCIFLUSH);
     printf("Please select your timezone:\n");
     // then lists the timezones available in that region
     char timezone[50];
