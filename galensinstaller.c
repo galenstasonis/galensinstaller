@@ -239,7 +239,7 @@ int main(void) {
     printf("Enter the name of any package in the repos you would like to install (n to skip):\n");
     char extraPackages[100];
     scanf("%s", extraPackages);
-    while (extraPackages != "n") {
+    while (strcmp(extraPackages, "n") != 0) {
         char extraPackagesCommand[100] = "arch-chroot /mnt/arch pacman -S ";
         strcat(extraPackagesCommand, extraPackages);\
         system(extraPackagesCommand);
