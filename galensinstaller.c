@@ -243,6 +243,8 @@ int main(void) {
         char extraPackagesCommand[100] = "arch-chroot /mnt/arch pacman -S ";
         strcat(extraPackagesCommand, extraPackages);\
         system(extraPackagesCommand);
+        printf("Enter the name of any package in the repos you would like to install (n to skip):\n");
+        scanf("%s"), extraPackages;
     } 
     printf("Arch installation complete, please reboot and remove the installation media\n");
     printf("Reboot now? [y/n]");
