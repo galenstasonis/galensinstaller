@@ -235,7 +235,24 @@ int main(void) {
     }
     else {
         printf("Optional packages not installed\n");
-    }  
+    } 
+    printf("Enter the name of any package in the repos you would like to install (n to skip):\n");
+    char extraPackages[100];
+    scanf("%s", extraPackages);
+    while (extraPackages != "n") {
+        char extraPackagesCommand[100] = "arch-chroot /mnt/arch pacman -S ";
+        strcat(extraPackagesCommand, extraPackages);\
+        system(extraPackagesCommand);
+    } 
     printf("Arch installation complete, please reboot and remove the installation media\n");
+    printf("Reboot now? [y/n]");
+    char rebootOption[5];
+    scanf("%s", rebootOption);
+    if (strcmp(rebootOption, "y") == 0) {
+        system("reboot");
+    }
+    else {
+        return 0;
+    }
     return 0;
 }
