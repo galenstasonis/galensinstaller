@@ -244,7 +244,7 @@ int main(void) {
         strcat(extraPackagesCommand, extraPackages);\
         system(extraPackagesCommand);
         printf("Enter the name of any package in the repos you would like to install (n to skip):\n");
-        scanf("%s"), extraPackages;
+        scanf("%s", extraPackages);
     } 
     printf("Arch installation complete, please reboot and remove the installation media\n");
     printf("Reboot now? [y/n]");
