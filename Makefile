@@ -1,3 +1,6 @@
+.PHONY: all a c galensinstaller
+
+all: a c galensinstaller
 a:
 	cc a.c -o a
 c:
